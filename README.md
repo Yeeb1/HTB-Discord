@@ -15,7 +15,7 @@ Here’s a collection of hacked-together scripts to integrate some HTB goodness 
    - Fetches **unreleased HTB machines** and creates forum threads and announcements.
    - Automatically schedules Discord events for machine releases.
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/5be698ef-12b8-4b49-8c87-787573497b54" width="400">
+    <img src="https://github.com/user-attachments/assets/5be698ef-12b8-4b49-8c87-787573497b54" >
 
 
 
@@ -24,21 +24,21 @@ Here’s a collection of hacked-together scripts to integrate some HTB goodness 
    - Creates forum threads with appropriate tags (category and difficulty).
    - Posts announcements in a designated channel.
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/ac95fee3-84c7-418b-b104-6fdfd052ce6e" width="400">
+    <img src="https://github.com/user-attachments/assets/ac95fee3-84c7-418b-b104-6fdfd052ce6e" >
      
 
 
 ### htb_notice.py
    - Grabs platform warnings and notices from HTB, recently some box related credentials were pushed over that endpoint.
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/11c8052b-173d-4ad4-bfbc-eac71fe44d00" width="400">
+    <img src="https://github.com/user-attachments/assets/11c8052b-173d-4ad4-bfbc-eac71fe44d00" >
   
 
 ### htb_osint.py
    - Use `!osint [machine_name]` to fetch machine profiles, creator details, and more.
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/c78db559-af5b-4bcc-a8df-7109ad350845" width="400">
+    <img src="https://github.com/user-attachments/assets/c78db559-af5b-4bcc-a8df-7109ad350845" >
 
 ---
 
