@@ -11,7 +11,7 @@ Here’s a collection of hacked-together scripts to integrate some HTB goodness 
 ---
 
 ## Scripts Overview
-### 1. **`htb_machines.py`**
+### htb_machines.py
    - Fetches **unreleased HTB machines** and creates forum threads and announcements.
    - Automatically schedules Discord events for machine releases.
 <p align="center">
@@ -19,7 +19,7 @@ Here’s a collection of hacked-together scripts to integrate some HTB goodness 
 
 
 
-### 2. **`htb_challenges.py`**
+### htb_challenges.py
    - Fetches **unreleased HTB challenges** and posts them on Discord.
    - Creates forum threads with appropriate tags (category and difficulty).
    - Posts announcements in a designated channel.
@@ -28,13 +28,13 @@ Here’s a collection of hacked-together scripts to integrate some HTB goodness 
      
 
 
-### 3. **`htb_notice.py`**
+### htb_notice.py
    - Grabs platform warnings and notices from HTB, recently some box related credentials were pushed over that endpoint.
 <p align="center">
     <img src="https://github.com/user-attachments/assets/11c8052b-173d-4ad4-bfbc-eac71fe44d00" width="400">
   
 
-### 4. **`htb_osint.py`**
+### htb_osint.py
    - Use `!osint [machine_name]` to fetch machine profiles, creator details, and more.
 
 <p align="center">
