@@ -6,7 +6,7 @@
 
 Here’s a collection of hacked-together scripts to integrate some HTB goodness into your Discord server. These scripts were pieced together to run either on-demand or as services on a server. They use SQLite to keep track of state, so you don't spam duplicate posts every time you run them.
 
-> **Heads Up:** These scripts make heavy use of Discord’s community server features (forum threads). If you don’t want Discord sniffing through your messages (like more than anyways), temporarily enable the community server mode, use the features you need, and then disable it afterward.
+> **Heads Up:** These scripts make heavy use of Discord’s community server features (forum threads). If you don’t want Discord sniffing through your messages (like more than anyways), temporarily enable the community server mode, create a few forums, and then disable it afterward.
 
 ---
 
