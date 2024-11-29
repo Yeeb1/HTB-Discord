@@ -1,7 +1,7 @@
 # HackTheBot
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/2a153c5d-791b-473c-9062-488b535a60be" width="400">
+    <img src="https://github.com/user-attachments/assets/17106da1-f82d-4d01-b263-5dc094abb130" width="400">
 
 
 Here’s a collection of hacked-together scripts to integrate some HTB goodness into your Discord server. These scripts were pieced together to run either on-demand or as services on a server. They use SQLite to keep track of state, so you don't spam duplicate posts every time you run them.
