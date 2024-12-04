@@ -23,7 +23,7 @@ HTB_CHALLENGES_URL = "https://labs.hackthebox.com/api/v4/challenges?state=unrele
 headers = {
     "Authorization": f"Bearer {HTB_BEARER_TOKEN}",
     "Accept": "application/json",
-    "User-Agent": "HTB-Challenge-Bot/1.0"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.55"    
 }
 
 def initialize_db():
