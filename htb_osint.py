@@ -21,7 +21,8 @@ async def osint(ctx, machine_name: str):
     HTB_MACHINE_PROFILE_URL = f"https://labs.hackthebox.com/api/v4/machine/profile/{machine_name}"
     headers = {
         "Authorization": f"Bearer {HTB_BEARER_TOKEN}",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.55"
     }
 
     try:
