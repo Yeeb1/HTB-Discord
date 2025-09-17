@@ -13,6 +13,7 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 HTB_BEARER_TOKEN = os.getenv("HTB_BEARER_TOKEN")
 MACHINES_CHANNEL_ID = int(os.getenv("MACHINES_CHANNEL_ID"))
 MACHINES_VOICE_CHANNEL_ID = int(os.getenv("MACHINES_VOICE_CHANNEL_ID"))
+HTB_FORUM_CHANNEL_ID = int(os.getenv("FORUM_CHANNEL_ID"))
 
 intents = discord.Intents.default()
 intents.message_content = False
@@ -114,31 +115,25 @@ async def download_image(url):
                 return None
 
 async def create_discord_event(machine):
-    """Create a Discord scheduled event for the machine with a cover image."""
-    guild = None
-    if client.guilds:
-        guild = client.guilds[0]
-
-    if not guild:
-        print("Error: Bot is not connected to any guilds.")
+    voice_channel = await resolve_channel(MACHINES_VOICE_CHANNEL_ID)
+    if not isinstance(voice_channel, discord.VoiceChannel):
+        print("Error: MACHINES_VOICE_CHANNEL_ID is not a voice channel.")
         return
 
-    voice_channel = guild.get_channel(MACHINES_VOICE_CHANNEL_ID)
-    if voice_channel is None:
-        print("Error: Voice channel not found!")
-        return
+    guild = voice_channel.guild
+    me = guild.me or await guild.fetch_member(client.user.id)
 
-    guild_permissions = guild.me.guild_permissions
-    voice_permissions = voice_channel.permissions_for(guild.me)
+    guild_perms = me.guild_permissions
+    chan_perms = voice_channel.permissions_for(me)
 
-    if not guild_permissions.manage_events:
+    if not guild_perms.manage_events:
         print("Error: Bot lacks 'Manage Events' permission in the guild.")
         return
-    if not voice_permissions.view_channel:
-        print("Error: Bot lacks 'View Channel' permission for the voice channel.")
+    if not chan_perms.view_channel:
+        print("Error: Bot lacks 'View Channel' for the voice channel.")
         return
-    if not voice_permissions.connect:
-        print("Error: Bot lacks 'Connect' permission for the voice channel.")
+    if not chan_perms.connect:
+        print("Error: Bot lacks 'Connect' for the voice channel.")
         return
 
     creator = machine['firstCreator'][0]['name'] if machine.get('firstCreator') else 'Unknown'
@@ -146,21 +141,17 @@ async def create_discord_event(machine):
     machine_link = f"https://app.hackthebox.com/machines/{machine['name']}"
     event_description = f"{machine['os']} - {machine['difficulty_text']} - by {creator}\n\n{machine_link}"
 
-    release_date_str = machine['release']
-    release_date = datetime.fromisoformat(release_date_str.replace("Z", "+00:00")).astimezone(timezone.utc)
-    release_date_utc_plus_1 = release_date + timedelta(hours=0)
-    event_start_time = release_date_utc_plus_1
-    event_end_time = event_start_time + timedelta(hours=2)
+    start = datetime.fromisoformat(machine['release'].replace("Z", "+00:00")).astimezone(timezone.utc)
+    end = start + timedelta(hours=2)
 
-    avatar_url = f"https://labs.hackthebox.com{machine['avatar']}"
-    image_data = await download_image(avatar_url)
+    image_data = await download_image(f"https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com{machine['avatar']}")
 
     try:
         await guild.create_scheduled_event(
             name=event_name,
             description=event_description,
-            start_time=event_start_time,
-            end_time=event_end_time,
+            start_time=start,
+            end_time=end,
             channel=voice_channel,
             entity_type=discord.EntityType.voice,
             privacy_level=discord.PrivacyLevel.guild_only,
@@ -171,9 +162,9 @@ async def create_discord_event(machine):
         print(f"Failed to create event: {e}")
 
 
+
 async def create_forum_thread(machine):
     """Create a forum thread for the new machine with the avatar image as the thread's cover."""
-    HTB_FORUM_CHANNEL_ID = int(os.getenv("HTB_FORUM_CHANNEL_ID"))
     forum_channel = client.get_channel(HTB_FORUM_CHANNEL_ID)
     if not forum_channel:
         print("Error: Forum channel not found!")
@@ -188,7 +179,7 @@ async def create_forum_thread(machine):
             print(f"Error: Missing tags for OS='{machine['os']}' or Difficulty='{machine['difficulty_text']}'")
             return
 
-        avatar_url = f"https://labs.hackthebox.com{machine['avatar']}"
+        avatar_url = f"https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com{machine['avatar']}"
         image_data = await download_image(avatar_url)
         creator = machine['firstCreator'][0]['name'] if machine.get('firstCreator') else 'Unknown'
 
@@ -226,25 +217,39 @@ async def create_forum_thread(machine):
         print(f"Failed to create thread for machine {machine['name']}: {e}")
 
 
-
-
-
 async def send_machine_to_channel(machine):
-    """Send a new machine notification, create an event, and create a forum thread."""
-    channel = client.get_channel(MACHINES_CHANNEL_ID)
+    channel = await resolve_channel(MACHINES_CHANNEL_ID)
 
-    permissions = channel.permissions_for(channel.guild.me)
-    if not permissions.send_messages:
-        print("Error: Bot lacks 'Send Messages' permission.")
-        return
-    if not permissions.embed_links:
-        print("Error: Bot lacks 'Embed Links' permission.")
-        return
+    if isinstance(channel, discord.ForumChannel):
+        print("MACHINES_CHANNEL_ID is a Forum channel; skipping .send() here.")
+    else:
+        me = channel.guild.me or await channel.guild.fetch_member(client.user.id)
+        perms = channel.permissions_for(me)
+        if not perms.send_messages:
+            print("Error: Bot lacks 'Send Messages' permission.")
+            return
+        if not perms.embed_links:
+            print("Error: Bot lacks 'Embed Links' permission.")
+            return
 
-    embed = format_machine_message(machine)
-    await channel.send(embed=embed)
-    await create_discord_event(machine)  
-    await create_forum_thread(machine) 
+        embed = format_machine_message(machine)
+        await channel.send(embed=embed)
+
+    await create_discord_event(machine)
+    await create_forum_thread(machine)
+
+
+async def resolve_channel(channel_id: int):
+    ch = client.get_channel(channel_id)  # cache
+    if ch is not None:
+        return ch
+    try:
+        ch = await client.fetch_channel(channel_id)  # API
+        return ch
+    except discord.NotFound:
+        raise RuntimeError(f"Channel {channel_id} not found or bot not in its guild.")
+    except discord.Forbidden:
+        raise RuntimeError(f"Bot lacks permission to view channel {channel_id}.")
 
 
 async def fetch_machines():
