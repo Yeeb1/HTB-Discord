@@ -15,9 +15,25 @@ All features are configured in a single YAML file and can be turned on or off as
 ## Features
 
 - **Machine Monitoring**: Automatically posts upcoming HTB machines with Discord events and forum threads
-- **Challenge Tracking**: Also monitors for new HTB challenges 
+<p align="center">
+<img width="379" height="502" alt="image" src="https://github.com/user-attachments/assets/fc6621ea-0e5d-4a2f-a2df-1c7e8644053a" />
+</p>
+
+- **Challenge Tracking**: Also monitors for new HTB challenges
+<p align="center">
+<img width="379" height="159" alt="image" src="https://github.com/user-attachments/assets/d34b6a8b-a157-4613-a2c6-95072163e2ac" />
+</p>
+
 - **Platform Notices**: Forwards HTB platform warnings and notices to Discord
+<p align="center">
+<img width="568" height="144" alt="image" src="https://github.com/user-attachments/assets/e96af6a2-7331-427b-a53e-9ed5615b5624" />
+</p>
+
 - **OSINT**: Automatic intelligence gathering for machines and challenges including creator profiles, historical content, and statistics
+<p align="center">
+<img width="508" height="709" alt="image" src="https://github.com/user-attachments/assets/3e908300-097c-4004-ac19-630dfdca1b4d" />
+</p>
+
 - **Link Archival**: Optional Linkwarden integration for automatic link collection
 - **Unified Configuration**: Single YAML config file with feature toggles
 
