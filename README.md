@@ -1,23 +1,27 @@
-# HTB-Discord
+# HackTheBot
 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/17106da1-f82d-4d01-b263-5dc094abb130" width="400">
 </p>
 
-A sophisticated Discord service that integrates HackTheBox platform data into Discord servers. This unified service replaces the original collection of separate bot scripts with a modern, configurable, and maintainable architecture.
+HackTheBot is a Discord bot that sends Hack The Box updates and information towards your Discord server.
+It can automatically post newly released machines and challenges, forward platform notices, collect basic OSINT details, and optionally archive links.
+All features are configured in a single YAML file and can be turned on or off as needed
 
-## 🚀 Features
+> Heads Up: These scripts make heavy use of Discord’s community server features (forum threads). If you don’t want Discord sniffing through your messages (like more than anyways), temporarily enable the community server mode, create a few forums, and then disable it afterward.
 
-- **Machine Monitoring**: Automatically posts unreleased HTB machines with Discord events and forum threads
-- **Challenge Tracking**: Monitors new HTB challenges with comprehensive intelligence including ratings, difficulty, solve counts, and first blood information
+
+
+## Features
+
+- **Machine Monitoring**: Automatically posts upcoming HTB machines with Discord events and forum threads
+- **Challenge Tracking**: Also monitors for new HTB challenges 
 - **Platform Notices**: Forwards HTB platform warnings and notices to Discord
-- **Enhanced OSINT**: Automatic intelligence gathering for machines and challenges including creator profiles, historical content, and detailed statistics
+- **OSINT**: Automatic intelligence gathering for machines and challenges including creator profiles, historical content, and statistics
 - **Link Archival**: Optional Linkwarden integration for automatic link collection
 - **Unified Configuration**: Single YAML config file with feature toggles
-- **Service Management**: Production-ready with systemd integration
-- **Modern Tooling**: Built with uv, type hints, and comprehensive error handling
 
-## 📋 Requirements
+## Requirements
 
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/) package manager
@@ -25,7 +29,7 @@ A sophisticated Discord service that integrates HackTheBox platform data into Di
 - HTB API token
 - Discord server with community features enabled
 
-## 🛠️ Quick Start
+## Quick Start
 
 ### 1. Install uv (if not already installed)
 ```bash
@@ -39,28 +43,19 @@ cd HTB-Discord
 uv sync
 ```
 
-### 3. Configure environment variables
-```bash
-export DISCORD_TOKEN="your_discord_bot_token"
-export HTB_BEARER_TOKEN="your_htb_api_token"
-export GENERAL_CHANNEL_ID="123456789"
-export MACHINES_CHANNEL_ID="123456789"
-# ... add other required channel IDs
-```
-
-### 4. Generate and customize config
+### 3. Generate and customize config
 ```bash
 uv run htb-discord generate-config
 cp config.sample.yaml config.yaml
 # Edit config.yaml to match your setup
 ```
 
-### 5. Run the service
+### 4. Run the service
 ```bash
 uv run htb-discord
 ```
 
-## 📖 Documentation
+## Documentation
 
 ### Configuration
 
@@ -109,9 +104,9 @@ make test                             # Run tests
 ### Discord Setup
 
 Your Discord server needs:
-- **Community features enabled** (for forum channels)
+- **Community features enabled** (for forum channels, can be disabled after forum creation)
 - **Forum channels** with appropriate tags:
-  - Machine forum: OS tags (linux, windows, freebsd) + difficulty tags
+  - Machine forum: OS tags (linux, windows, etc) + difficulty tags
   - Challenge forum: Category tags (web, crypto, pwn, etc.) + difficulty tags
 - **Voice channels** for scheduled events
 - **Bot permissions**: Send Messages, Manage Threads, Manage Events, View Channels, Embed Links
@@ -128,7 +123,7 @@ sudo systemctl status htb-discord
 sudo journalctl -u htb-discord -f
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 The service follows a modular architecture:
 
@@ -150,7 +145,7 @@ src/htb_discord/
 
 Each module can be independently enabled/disabled and configured through the main config file.
 
-## 🔧 Development
+## Development
 
 ### Setup Development Environment
 ```bash
@@ -160,36 +155,3 @@ make format                  # Format code
 make typecheck              # Run type checking
 ```
 
-### Adding New Features
-1. Create a new module in `src/htb_discord/modules/`
-2. Add configuration options to `config.yaml`
-3. Register the module in `service.py`
-4. Add appropriate tests
-
-## 📝 Migration from Original Scripts
-
-If you're migrating from the original individual bot scripts:
-
-1. **Database Migration**: The new service uses the same SQLite database files, so existing state is preserved
-2. **Configuration**: Convert your `.env` variables to the new `config.yaml` format
-3. **Systemd Services**: Replace individual service files with the unified `htb-discord.service`
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes with proper type hints and documentation
-4. Run tests and linting: `make test lint`
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🐛 Issues
-
-Report bugs and feature requests on the [GitHub Issues](https://github.com/Yeeb1/HTB-Discord/issues) page.
-
----
-
-**Note**: These scripts make heavy use of Discord's community server features (forum threads). If you don't want Discord analyzing your messages, temporarily enable community server mode, create the required forums, and then disable it afterward.
