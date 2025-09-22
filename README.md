@@ -79,7 +79,7 @@ features:
     poll_interval: 60         # Check every minute
 
   osint:
-    enabled: false  # Disabled - OSINT now runs automatically with machine and challenge posts
+    enabled: false  # Legcay and Disabled - OSINT now runs automatically with new machine and challenge posts
     command_prefix: "!"
 
   linkwarden:
