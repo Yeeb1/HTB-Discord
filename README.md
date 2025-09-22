@@ -1,80 +1,195 @@
-# HackTheBot
+# HTB-Discord
 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/17106da1-f82d-4d01-b263-5dc094abb130" width="400">
+</p>
 
+A sophisticated Discord service that integrates HackTheBox platform data into Discord servers. This unified service replaces the original collection of separate bot scripts with a modern, configurable, and maintainable architecture.
 
-Here’s a collection of hacked-together scripts to integrate some HTB goodness into your Discord server. These scripts were pieced together to run either on-demand or as services on a server. They use SQLite to keep track of state, so you don't spam duplicate posts every time you run them.
+## 🚀 Features
 
-> **Heads Up:** These scripts make heavy use of Discord’s community server features (forum threads). If you don’t want Discord sniffing through your messages (like more than anyways), temporarily enable the community server mode, create a few forums, and then disable it afterward.
+- **Machine Monitoring**: Automatically posts unreleased HTB machines with Discord events and forum threads
+- **Challenge Tracking**: Monitors new HTB challenges with comprehensive intelligence including ratings, difficulty, solve counts, and first blood information
+- **Platform Notices**: Forwards HTB platform warnings and notices to Discord
+- **Enhanced OSINT**: Automatic intelligence gathering for machines and challenges including creator profiles, historical content, and detailed statistics
+- **Link Archival**: Optional Linkwarden integration for automatic link collection
+- **Unified Configuration**: Single YAML config file with feature toggles
+- **Service Management**: Production-ready with systemd integration
+- **Modern Tooling**: Built with uv, type hints, and comprehensive error handling
+
+## 📋 Requirements
+
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) package manager
+- Discord bot with appropriate permissions
+- HTB API token
+- Discord server with community features enabled
+
+## 🛠️ Quick Start
+
+### 1. Install uv (if not already installed)
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### 2. Clone and setup
+```bash
+git clone https://github.com/Yeeb1/HTB-Discord.git
+cd HTB-Discord
+uv sync
+```
+
+### 3. Configure environment variables
+```bash
+export DISCORD_TOKEN="your_discord_bot_token"
+export HTB_BEARER_TOKEN="your_htb_api_token"
+export GENERAL_CHANNEL_ID="123456789"
+export MACHINES_CHANNEL_ID="123456789"
+# ... add other required channel IDs
+```
+
+### 4. Generate and customize config
+```bash
+uv run htb-discord generate-config
+cp config.sample.yaml config.yaml
+# Edit config.yaml to match your setup
+```
+
+### 5. Run the service
+```bash
+uv run htb-discord
+```
+
+## 📖 Documentation
+
+### Configuration
+
+The service uses a single `config.yaml` file for all settings:
+
+```yaml
+features:
+  machines:
+    enabled: true
+    create_events: true        # Discord scheduled events
+    create_forum_threads: true # Forum posts
+    send_announcements: true   # Channel messages
+    poll_interval: 600        # Check every 10 minutes
+
+  challenges:
+    enabled: true
+    # Similar options...
+
+  notices:
+    enabled: true
+    poll_interval: 60         # Check every minute
+
+  osint:
+    enabled: false  # Disabled - OSINT now runs automatically with machine and challenge posts
+    command_prefix: "!"
+
+  linkwarden:
+    enabled: false            # Optional feature
+```
+
+### Available Commands
+
+```bash
+# Service management
+uv run htb-discord                    # Start service
+uv run htb-discord validate           # Validate configuration
+uv run htb-discord generate-config    # Generate sample config
+
+# Development
+make run                              # Start in development mode
+make lint                             # Run code linting
+make format                           # Format code
+make test                             # Run tests
+```
+
+### Discord Setup
+
+Your Discord server needs:
+- **Community features enabled** (for forum channels)
+- **Forum channels** with appropriate tags:
+  - Machine forum: OS tags (linux, windows, freebsd) + difficulty tags
+  - Challenge forum: Category tags (web, crypto, pwn, etc.) + difficulty tags
+- **Voice channels** for scheduled events
+- **Bot permissions**: Send Messages, Manage Threads, Manage Events, View Channels, Embed Links
+
+### Production Deployment
+
+```bash
+# Install as system service
+sudo ./install.sh
+
+# Service management
+sudo systemctl start htb-discord
+sudo systemctl status htb-discord
+sudo journalctl -u htb-discord -f
+```
+
+## 🏗️ Architecture
+
+The service follows a modular architecture:
+
+```
+src/htb_discord/
+├── service.py              # Main service manager
+├── config.py               # Configuration management
+├── cli.py                  # Command line interface
+├── modules/                # Feature modules
+│   ├── machines.py         # Machine monitoring
+│   ├── challenges.py       # Challenge tracking
+│   ├── notices.py          # Notice forwarding
+│   ├── osint.py           # OSINT commands
+│   └── linkwarden.py      # Link archival
+└── utils/                  # Shared utilities
+    ├── database.py         # SQLite management
+    └── discord_helpers.py  # Discord utilities
+```
+
+Each module can be independently enabled/disabled and configured through the main config file.
+
+## 🔧 Development
+
+### Setup Development Environment
+```bash
+uv sync --group dev          # Install dev dependencies
+make lint                    # Check code quality
+make format                  # Format code
+make typecheck              # Run type checking
+```
+
+### Adding New Features
+1. Create a new module in `src/htb_discord/modules/`
+2. Add configuration options to `config.yaml`
+3. Register the module in `service.py`
+4. Add appropriate tests
+
+## 📝 Migration from Original Scripts
+
+If you're migrating from the original individual bot scripts:
+
+1. **Database Migration**: The new service uses the same SQLite database files, so existing state is preserved
+2. **Configuration**: Convert your `.env` variables to the new `config.yaml` format
+3. **Systemd Services**: Replace individual service files with the unified `htb-discord.service`
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with proper type hints and documentation
+4. Run tests and linting: `make test lint`
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🐛 Issues
+
+Report bugs and feature requests on the [GitHub Issues](https://github.com/Yeeb1/HTB-Discord/issues) page.
 
 ---
 
-## Scripts Overview
-### htb_machines.py
-   - Fetches **unreleased HTB machines** and creates forum threads and announcements.
-   - Automatically schedules Discord events for machine releases.
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/5be698ef-12b8-4b49-8c87-787573497b54" >
-
-
-
-### htb_challenges.py
-   - Fetches **unreleased HTB challenges** and posts them on Discord.
-   - Creates forum threads with appropriate tags (category and difficulty).
-   - Posts announcements in a designated channel.
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/ac95fee3-84c7-418b-b104-6fdfd052ce6e" >
-     
-
-
-### htb_notice.py
-   - Grabs platform warnings and notices from HTB, recently some box related credentials were pushed over that endpoint.
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/11c8052b-173d-4ad4-bfbc-eac71fe44d00" >
-  
-
-### htb_osint.py
-   - Use `!osint [machine_name]` to fetch machine profiles, creator details, and more.
-
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/c78db559-af5b-4bcc-a8df-7109ad350845" >
-
----
-
-
-###  Environment Variables
-   - Set up a `.env` file in the project directory with the following values:
-     ```
-     DISCORD_TOKEN=<Your Discord Bot Token>
-     HTB_BEARER_TOKEN=<Your HTB API Token>
-     GENERAL_CHANNEL_ID=<Channel ID for Announcements>
-     FORUM_CHANNEL_ID=<Forum Channel ID for Threads>
-     MACHINES_CHANNEL_ID=<Channel ID for Machines Announcements>
-     CHALL_VOICE_CHANNEL_ID=<Voice Channel ID for Event Scheduling>
-     ```
-
----
-
-
-## Permissions Needed
-
-Make sure your Discord bot has these permissions:
-- **Send Messages**
-- **Manage Threads**
-- **Manage Events**
-- **View Channels**
-
----
-
-## SQLite Statefulness
-
-Each script uses SQLite to keep track of already posted challenges, machines, or notices. Databases like `machines.db` and `challenges.db` will be created automatically when you run the scripts.
-
----
-
-## Final Notes
-
-These scripts are far from perfect and were thrown together to solve a specific set of problems. If you use them and they work, great! If not, feel free to tweak them for your needs.
-
-If something breaks, it’s probably on you (but maybe on me).
+**Note**: These scripts make heavy use of Discord's community server features (forum threads). If you don't want Discord analyzing your messages, temporarily enable community server mode, create the required forums, and then disable it afterward.

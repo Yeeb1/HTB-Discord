@@ -1,0 +1,42 @@
+[Unit]
+Description=HTB Discord Integration Service
+Documentation=https://github.com/Yeeb1/HTB-Discord
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=htb-discord
+Group=htb-discord
+WorkingDirectory=/opt/htb-discord
+ExecStart=/usr/bin/uv run --project /opt/htb-discord htb-discord --config /opt/htb-discord/config.yaml
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=30
+TimeoutStopSec=30
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/htb-discord/data /opt/htb-discord/logs
+PrivateTmp=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+
+# Environment
+Environment=PYTHONPATH=/opt/htb-discord/src
+Environment=PYTHONUNBUFFERED=1
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=htb-discord
+
+[Install]
+WantedBy=multi-user.target
