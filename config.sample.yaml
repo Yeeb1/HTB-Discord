@@ -56,6 +56,14 @@ features:
       links_per_batch: 10
       batch_interval: 6  # seconds
 
+  ics_feed:
+    enabled: true
+    secret_path: ""   # z.B. "9b2f6c02-2b7a-4f0e-8c2f-6a1f9b63a3a4"; leer = direkt /calendar.ics
+    lookback_days: 30
+    lookahead_days: 120
+    default_duration_minutes: 120   # wenn kein dtend vorhanden
+    prodid: "-//HTB-Discord//ICS Feed//EN"    
+
 # Database Configuration
 database:
   # SQLite database files
