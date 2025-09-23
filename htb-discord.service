@@ -9,7 +9,7 @@ Type=simple
 User=htb-discord
 Group=htb-discord
 WorkingDirectory=/opt/htb-discord
-ExecStart=/usr/bin/uv run --project /opt/htb-discord htb-discord --config /opt/htb-discord/config.yaml
+ExecStart=/opt/htb-discord/.local/bin/uv run --project /opt/htb-discord python -m htb_discord --config /opt/htb-discord/config.yaml
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=30
@@ -19,7 +19,7 @@ TimeoutStopSec=30
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/htb-discord/data /opt/htb-discord/logs
+ReadWritePaths=/opt/htb-discord/data /opt/htb-discord/logs /opt/htb-discord/.cache /opt/htb-discord/.venv
 PrivateTmp=true
 ProtectControlGroups=true
 ProtectKernelModules=true
@@ -32,6 +32,7 @@ MemoryDenyWriteExecute=true
 # Environment
 Environment=PYTHONPATH=/opt/htb-discord/src
 Environment=PYTHONUNBUFFERED=1
+Environment=XDG_CACHE_HOME=/opt/htb-discord/.cache
 
 # Logging
 StandardOutput=journal
